@@ -153,6 +153,50 @@ const errorHandling = (err, req, res, next) => {
 }
 app.use(errorHandling)
 
+app.get('/', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM users');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+app.get("/students", async (req, res) => {
+    try {
+      const result = await db.query("SELECT * FROM students");
+      res.status(200).json({
+        status: "success",
+        data: result.rows,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+  app.post("/students", async (req, res) => {
+    const { name, address } = req.body;
+    try {
+      const result = await db.query(
+        `INSERT into students (name, address) values ('${name}', '${address}')`
+      );
+      res.status(200).json({
+        status: "success",
+        message: "data berhasil dimasukan",
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`)
 })
